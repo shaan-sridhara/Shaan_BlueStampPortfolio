@@ -85,9 +85,6 @@ To watch the BSE tutorial on how to create a portfolio, click here.
 # Starter Project
 This is the Retro Arcade Console I built for this project. We received pre-built parts and had to solder them onto the board. Soldering precisely was a challenge, as there were many tight spots with multiple connections close together. I learned that soldering requires time, focus, and patience to do well. Overall, I think this was an excellent project for anyone interested in learning soldering through a fun and hands-on robotics experience.
 
-This is where you can buy the Retro Arcade Console so you can make it yourself:
-https://tinyurl.com/Retro-Arcade-Console
-
 This is a video of me demoing the Retro Arcade Console:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FWgXDVm8kqY?si=U474cKpsJ89gVsbU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
