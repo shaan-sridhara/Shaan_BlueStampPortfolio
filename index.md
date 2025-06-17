@@ -1,11 +1,5 @@
-# Retro Arcade Console
-This is the Retro Arcade Console I built for this project. We received pre-built parts and had to solder them onto the board. Soldering precisely was a challenge, as there were many tight spots with multiple connections close together. I learned that soldering requires time, focus, and patience to do well. Overall, I think this was an excellent project for anyone interested in learning soldering through a fun and hands-on robotics experience.
-
-You should comment out all portions of your portfolio that you have not completed yet, as well as any instructions:
-```HTML 
-<!--- This is an HTML comment in Markdown -->
-<!--- Anything between these symbols will not render on the published site -->
-```
+# Smart Glasses
+Description
 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
@@ -89,3 +83,6 @@ One of the best parts about Github is that you can view how other people set up 
 - [Example 3](https://arneshkumar.github.io/arneshbluestamp/)
 
 To watch the BSE tutorial on how to create a portfolio, click here.
+
+# Starter Project
+This is the Retro Arcade Console I built for this project. We received pre-built parts and had to solder them onto the board. Soldering precisely was a challenge, as there were many tight spots with multiple connections close together. I learned that soldering requires time, focus, and patience to do well. Overall, I think this was an excellent project for anyone interested in learning soldering through a fun and hands-on robotics experience.
