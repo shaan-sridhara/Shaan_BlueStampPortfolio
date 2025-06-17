@@ -5,7 +5,7 @@ Description
 |:--:|:--:|:--:|:--:|
 | Shaan S | Bret Harte | Biomedical Engineering | Incoming 8th Grader
 
-![Headstone Image](ShaanS.jpg)
+![Headstone Image](image_2025-06-17_161621492.png)
   
 # Final Milestone
 
