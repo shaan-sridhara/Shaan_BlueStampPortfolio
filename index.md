@@ -91,4 +91,6 @@ This is where you can buy the Retro Arcade Console so you can make it yourself:
 https://tinyurl.com/Retro-Arcade-Console
 
 This is a video of me demoing the Retro Arcade Console:
-https://www.youtube.com/watch?v=FWgXDVm8kqY&list=PLe-u_DjFx7eui8dmPGji-0-slT8KydYv_&index=27
+<iframe width="560" height="315" src="https://www.youtube.com/embed/FWgXDVm8kqY?si=U474cKpsJ89gVsbU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
