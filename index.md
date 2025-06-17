@@ -1,5 +1,5 @@
-# Project Name Here
-Replace this text with a brief description (2-3 sentences) of your project. This description should draw the reader in and make them interested in what you've built. You can include what the biggest challenges, takeaways, and triumphs from completing the project were. As you complete your portfolio, remember your audience is less familiar than you are with all that your project entails!
+# Retro Arcade Console
+This is the Retro Arcade Console I built for this project. We received pre-built parts and had to solder them onto the board. Soldering precisely was a challenge, as there were many tight spots with multiple connections close together. I learned that soldering requires time, focus, and patience to do well. Overall, I think this was an excellent project for anyone interested in learning soldering through a fun and hands-on robotics experience.
 
 You should comment out all portions of your portfolio that you have not completed yet, as well as any instructions:
 ```HTML 
@@ -9,7 +9,7 @@ You should comment out all portions of your portfolio that you have not complete
 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
-| FirstName LastInitialOnly | School Name | Electrical Engineering | Incoming Senior
+| Shaan S | Bret Harte | Biomedical Engineering | Incoming 8th Grader
 
 **Replace the BlueStamp logo below with an image of yourself and your completed project. Follow the guide [here](https://tomcam.github.io/least-github-pages/adding-images-github-pages-site.html) if you need help.**
 
