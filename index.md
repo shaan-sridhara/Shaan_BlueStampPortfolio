@@ -9,31 +9,31 @@ Description
   
 # Final Milestone
 
-[comment]: <> (a reference style link.)
+[comment]: <> (work in progress)
 
 # Second Milestone
 
-Work in Progress
+[comment]: <> (work in progress)
 
 # First Milestone
 
-Work in Progress
+[comment]: <> (work in progress)
 
 # Schematics 
 
-Work in Progress
+[comment]: <> (work in progress)
 
 # Code
 
-Work in Progress
+[comment]: <> (work in progress)
 
 # Bill of Materials
 
-Work in Progress
+[comment]: <> (work in progress)
 
 # Other Resources/Examples
 
-Work in Progress
+[comment]: <> (work in progress)
 
 # Starter Project
 This is the Retro Arcade Console I built for this project. We received pre-built parts and had to solder them onto the board. Soldering precisely was a challenge, as there were many tight spots with multiple connections close together. I learned that soldering requires time, focus, and patience to do well. Overall, I think this was an excellent project for anyone interested in learning soldering through a fun and hands-on robotics experience.
