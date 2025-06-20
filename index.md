@@ -7,31 +7,31 @@
 
 ![Headstone Image](image_2025-06-17_161621492.png)
   
-# Final Milestone
+[comment]: <> (# Final Milestone)
 
 [comment]: <> (work in progress)
 
-# Second Milestone
+[comment]: <> (# Second Milestone)
 
 [comment]: <> (work in progress)
 
-# First Milestone
+[comment]: <> (# First Milestone)
 
 [comment]: <> (work in progress)
 
-# Schematics 
+[comment]: <> (# Schematics)
 
 [comment]: <> (work in progress)
 
-# Code
+[comment]: <> (# Code)
 
 [comment]: <> (work in progress)
 
-# Bill of Materials
+[comment]: <> (# Bill of Materials)
 
 [comment]: <> (work in progress)
 
-# Other Resources/Examples
+[comment]: <> (# Other Resources/Examples)
 
 [comment]: <> (work in progress)
 
