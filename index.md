@@ -23,6 +23,8 @@ So far, I was able to take a picture using the Raspberry Pi and the camera. At f
 
 My plan now is to find a database of pictures to help train the AI to recognize different objects. Once I get that working, I’ll connect it to a text-to-speech program so the glasses can tell the person what it sees. That way, the Smart Glasses will be able to help people understand what’s around them without needing to see it.
 
+![Milestone_Setup]()
+
 [comment]: <> (# Schematics)
 
 [comment]: <> (work in progress)
