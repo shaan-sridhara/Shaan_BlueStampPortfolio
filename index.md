@@ -1,5 +1,5 @@
 # Smart Glasses
-Description
+[comment]: <> (description)
 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
