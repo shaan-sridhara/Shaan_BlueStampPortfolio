@@ -9,7 +9,7 @@ Description
   
 # Final Milestone
 
-Work in Progress
+[comment]: <> (a reference style link.)
 
 # Second Milestone
 
