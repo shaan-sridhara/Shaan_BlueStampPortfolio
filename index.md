@@ -39,11 +39,11 @@ This is my first milestone video:
 
 # Bill of Materials
 
-| Part            | Note                             | Price  | Link                                                                 |
-|-----------------|----------------------------------|--------|----------------------------------------------------------------------|
-| Raspberry Pi 5  | Latest Raspberry Pi model        | $75    | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)     |
-| Pi Camera Module| Official camera for Raspberry Pi | $30    | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/)   |
-
+| Part                    | Note                                | Price | Link                                                               |
+|-------------------------|-------------------------------------|-------|--------------------------------------------------------------------|
+| Raspberry Pi 5          | Latest Raspberry Pi model           | $75   | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)   |
+| Pi Camera Module        | Official camera for Raspberry Pi    | $30   | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/) |
+| Non-prescription Glasses| Basic black non-prescription glasses| $5    | [Buy here](https://www.amazon.com/s?k=non+prescription+glasses)    |
 
 [comment]: <> (# Other Resources/Examples)
 
