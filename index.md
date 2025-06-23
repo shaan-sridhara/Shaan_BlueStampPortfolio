@@ -39,7 +39,24 @@ The next steps for this project are to get the camera module working so it can d
 
 ## Code
 
+```python
+from picamera2 import Picamera2, Preview
+import time
+import cv2
 
+picam2 = Picamera2()
+camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)},
+                                                  lores={"size": (640, 480)}, 
+                                                  display="lores")
+picam2.configure(camera_config)
+#picam2.start_preview(Preview.QTGL) #Comment this out if not using desktop interface
+picam2.start()
+time.sleep(2)
+im = picam2.capture_array()
+im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+cv2.imwrite('file.png', im)
+
+This code initializes the Raspberry Pi Camera using the Picamera2 library, configures it to capture a still image at a resolution of 1920x1080, and starts the camera. After a brief delay to allow the camera to adjust, it captures an image, converts its color format from BGR to RGB using OpenCV, and saves the image as "file.png".
 
 [comment]: <> (# Schematics)
 
