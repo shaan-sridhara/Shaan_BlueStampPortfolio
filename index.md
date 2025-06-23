@@ -39,11 +39,12 @@ This is my first milestone video:
 
 # Bill of Materials
 
-| Part                    | Note                                | Price | Link                                                               |
-|-------------------------|-------------------------------------|-------|--------------------------------------------------------------------|
-| Raspberry Pi 5          | Latest Raspberry Pi model           | $75   | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)   |
-| Pi Camera Module        | Official camera for Raspberry Pi    | $30   | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/) |
-| Non-prescription Glasses| Basic black non-prescription glasses| $5    | [Buy here]([https://www.amazon.com/s?k=non+prescription+glasses](https://www.amazon.com/GQUEEN-201512-Fashion-Rectangular-Glasses/dp/B00ZRD1MEI/ref=sr_1_8?dib=eyJ2IjoiMSJ9.QdLv1uD5bXcAbonCujS6EvHTdOFJMi2Usm5VA3vEqTFqQcClRo79DxFa2xLGaKgdRX3wsFKpKJsOne6Q1X83T44NGrwUARA6W3GV-FALz11aj9NNybzfnDnu6UfSb1V3WFoGrmH_jUWLJE00kBfPFg29uf4O8Sjn5PEix4XMV8trzyoQy_VJXcUfUVaHjLzsxgiIVh4F0yLIXGUDH7UXVMLE1QO-Z62AibW3ZASkUQKJcITtMvpJ3C2ih9yFyjUO0GPFOSWw7p3A8jh3sd9eU4KIJK-uVA9RaU3olag2CKQ.a2M-x1Bhv3InbLeAbYU0swfycmpkx-wQwZ4JMaP3rco&dib_tag=se&keywords=non%2Bprescription%2Bglasses&qid=1750710781&sr=8-8&th=1))    |
+| Part                    | Note                                  | Price | Link                                                                                                     |
+|-------------------------|-------------------------------------|-------|----------------------------------------------------------------------------------------------------------|
+| Raspberry Pi 5          | Latest Raspberry Pi model             | $75   | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)                                         |
+| Pi Camera Module        | Official camera for Raspberry Pi     | $30   | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/)                                       |
+| Non-prescription Glasses| Black rectangular fashion glasses    | $12   | [Buy here](https://www.amazon.com/GQUEEN-201512-Fashion-Rectangular-Glasses/dp/B00ZRD1MEI/)               |
+
 
 [comment]: <> (# Other Resources/Examples)
 
