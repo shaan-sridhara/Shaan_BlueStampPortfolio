@@ -29,6 +29,32 @@ This is my first milestone video:
 
 ![Milestone_Setup](Screenshot 2025-06-20 161814.png)
 
+## Challenges
+
+One of the main challenges I faced during Milestone 1 was setting up the Raspberry Pi for a headless configuration, which means accessing and controlling the Pi remotely without a monitor or keyboard attached. This setup is very convenient because it allows you to program the Raspberry Pi from another computer over a network. However, due to slow and unstable Wi-Fi, I had trouble maintaining a consistent connection, which made the setup process difficult and sometimes impossible to complete. This experience taught me how important a reliable network is for remote device management and pushed me to troubleshoot connectivity issues while learning more about networking and remote access tools like SSH.
+
+## Next Steps
+
+The next steps for this project are to get the camera module working so it can detect and recognize different objects by using a database of known items. This means setting up software that can compare what the camera sees with stored information to identify objects accurately. At the same time, I plan to set up a continuous video stream so that the camera feed can be viewed and analyzed in real time. Having this live video combined with object detection will let the system recognize and classify objects as they come into view, making it more interactive and useful. To do this, I’ll need to explore different machine learning models, figure out how to run them efficiently on the Raspberry Pi, and make sure the camera, detection program, and database all work smoothly together. These steps will really push the project forward and help build a smart vision system that can respond to what it sees.
+
+## Code
+
+from picamera2 import Picamera2, Preview
+import time
+import cv2
+picam2 = Picamera2()
+camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)},
+lores={"size": (640, 480)}, display="lores")
+picam2.configure(camera_config)
+#picam2.start_preview(Preview.QTGL) #Comment this out if not using desktop interface
+picam2.start()
+time.sleep(2)
+im = picam2.capture_array()
+im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
+cv2.imwrite('file.png', im)
+
+This code initializes the Raspberry Pi Camera using the Picamera2 library, configures it to capture a still image at a resolution of 1920x1080, and starts the camera. After a brief delay to allow the camera to adjust, it captures an image, converts its color format from BGR to RGB using OpenCV, and saves the image as "file.png".
+
 [comment]: <> (# Schematics)
 
 [comment]: <> (work in progress)
