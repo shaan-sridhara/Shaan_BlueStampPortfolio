@@ -37,9 +37,13 @@ This is my first milestone video:
 
 [comment]: <> (work in progress)
 
-[comment]: <> (# Bill of Materials)
+# Bill of Materials
 
-[comment]: <> (work in progress)
+| Part            | Note                             | Price  | Link                                                                 |
+|-----------------|----------------------------------|--------|----------------------------------------------------------------------|
+| Raspberry Pi 5  | Latest Raspberry Pi model        | $75    | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)     |
+| Pi Camera Module| Official camera for Raspberry Pi | $30    | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/)   |
+
 
 [comment]: <> (# Other Resources/Examples)
 
