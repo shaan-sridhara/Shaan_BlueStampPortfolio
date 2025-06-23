@@ -46,13 +46,21 @@ This is my first milestone video:
 [comment]: <> (work in progress)
 
 # Starter Project
-This is the Retro Arcade Console I built for this project. We received pre-built parts and had to solder them onto the board. Soldering precisely was a challenge, as there were many tight spots with multiple connections close together. I learned that soldering requires time, focus, and patience to do well. Overall, I think this was an excellent project for anyone interested in learning soldering through a fun and hands-on robotics experience.
+This is the retro arcade console I built for this project, using the VOGURTIME Electronic Soldering Practice Kit. The kit came with pre-manufactured components, including a mini circuit board, joystick, LED display, and tactile buttons. The goal was to assemble a fully functional mini arcade game system by carefully soldering all the components to the PCB. Once completed, the arcade console lights up, plays sound, and allows simple interactive gameplay, making it a fun and practical introduction to basic electronics.
 
 This is a [link](https://www.amazon.com/Electronic-Soldering-Practice-Comfortable-VOGURTIME/dp/B094QRRHC2/ref=sr_1_3?asc_source=01H2RCFWNNZMQFGXGXS3RMXVE5&crid=12C0SOV36FG6M&dib=eyJ2IjoiMSJ9.Prj06eg0mzBHrfW8zuFr43Ott4t2wUOVBo8A8bYw0PqFZRlOEmgR5YwhMy7jXrdI2HlBjVttnEyYLz5CP684SzJyHmVMBp25vNna9o8wjV-df55ilTgj0xMy1CiRwkcnu6xqacZ3JUPlq8C3mQJwmEtoeokndNqpwpdkZBQMplM9vg3M-cfB0xM_nXdjeqHQ3bB707ehrzX6Llp-Euu3CTFzF8wgEqhPwo6RCvzbo5M.yyrFg8EXJr9BL5cOgZF551-8cIl91p0MSy8nGiilcpU&dib_tag=se&keywords=arcade%2Bsolder%2Bproject&qid=1717994267&sprefix=arcade%2Bsolder%2Bprojec%2Caps%2C147&sr=8-3&tag=snxs3-20&th=1) for the Retro Arcade Console:
-
 
 This is a video of me demoing the Retro Arcade Console:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/FWgXDVm8kqY?si=U474cKpsJ89gVsbU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+# Challenges
+One of the biggest challenges I faced was soldering the components precisely. Many of the soldering points were small and tightly packed, which required a steady hand and a lot of focus. It took some trial and error to get the hang of it, but I eventually learned that good soldering comes down to patience, attention to detail, and proper technique. Overall, this was a great project for learning hands-on skills in electronics through a fun and engaging experience.
+
+# Next Steps
+My next steps for this project involve beginning the initial phase of my intensive project. This first milestone will focus on assembling and configuring the core hardware components: a Raspberry Pi 5 and the official Pi Camera Module. I will begin by carefully connecting the camera to the Raspberry Pi using the appropriate ribbon cable and ensuring the hardware is properly secured and recognized by the system.
+
+Once the hardware is set up, I will move on to the software configuration. This includes enabling the camera interface through the Raspberry Pi OS settings and installing any necessary libraries or dependencies required to operate the camera. I will be using Visual Studio Code as my development environment to write and test Python scripts that allow the camera to capture still images.
+
+The goal of this milestone is to successfully capture a still photo using the Pi Camera, laying the groundwork for more advanced features later in the project. This step is critical as it ensures that both the hardware and software components are functioning correctly before progressing to more complex parts of my project.
 
