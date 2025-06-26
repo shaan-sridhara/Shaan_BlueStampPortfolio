@@ -41,7 +41,6 @@ picam2.set_controls({"AwbMode": 1})  # Enable auto white balance
 HTML = """
 <!doctype html>
 <title>Pi Camera Stream</title>
-<h1>Live Stream from Raspberry Pi Camera</h1>
 <img src="/video_feed">
 """
 
