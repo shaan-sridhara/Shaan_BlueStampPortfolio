@@ -31,7 +31,6 @@ import cv2
 
 app = Flask(__name__)
 
-# Set up camera
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration(
     main={"format": "RGB888", "size": (640, 480)}
@@ -39,7 +38,6 @@ picam2.configure(picam2.create_preview_configuration(
 picam2.start()
 picam2.set_controls({"AwbMode": 1})  # Enable auto white balance
 
-# HTML for the camera stream
 HTML = """
 <!doctype html>
 <title>Pi Camera Stream</title>
