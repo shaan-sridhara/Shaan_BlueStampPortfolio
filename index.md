@@ -24,74 +24,51 @@ This is my second milestone video:
 One of the main challenges I faced during this phase of the project was figuring out the correct mount for attaching the camera securely to the glasses. It took several attempts to find a position that was both stable and aligned well enough to capture a clear forward-facing view without interfering with the user's vision. Another major challenge was getting the object detection code to work properly. Setting up the TensorFlow Lite model involved dealing with compatibility issues, understanding how to preprocess frames correctly, and making sure the model could run efficiently on the Raspberry Pi without slowing down the video stream. Troubleshooting these problems required a lot of trial and error, but ultimately helped me better understand how real-time computer vision systems function.
 
 ## Code
-
+```Python
 from flask import Flask, Response, render_template_string
-
 from picamera2 import Picamera2
-
 import cv2
 
 app = Flask(__name__)
 
+# Set up camera
 picam2 = Picamera2()
-
 picam2.configure(picam2.create_preview_configuration(
-
     main={"format": "RGB888", "size": (640, 480)}
-
 ))
-
 picam2.start()
-
 picam2.set_controls({"AwbMode": 1})  # Enable auto white balance
 
-
+# HTML for the camera stream
 HTML = """
-
 <!doctype html>
-
 <title>Pi Camera Stream</title>
-
+<h1>Live Stream from Raspberry Pi Camera</h1>
 <img src="/video_feed">
-
 """
 
 def generate_frames():
-
     while True:
-    
         frame = picam2.capture_array()
-        
         #frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)  # Convert to correct format
-        
         ret, buffer = cv2.imencode('.jpg', frame)
-        
         if not ret:
-        
             continue
-        
         frame = buffer.tobytes()
-        
         yield (b'--frame\r\n'
-        
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
 @app.route('/')
-
 def index():
-
     return render_template_string(HTML)
 
 @app.route('/video_feed')
-
 def video_feed():
-
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
-    
     app.run(host='0.0.0.0', port=5000)
-
+```
 # First Milestone
 
 My project is called Smart Glasses. The goal is to help people, especially those who can’t see well, by using AI to detect objects around them. I’m building it using a Raspberry Pi 5 and a camera that attaches to it. These parts will go on a glasses frame. The camera takes video of what’s in front of the person, and the AI will figure out what the objects are. Then, the glasses will say what it sees out loud using a speaker so the person knows what’s around them.
@@ -115,33 +92,21 @@ One of the main challenges I faced during Milestone 1 was setting up the Raspber
 The next steps for this project are to get the camera module working so it can detect and recognize different objects by using a database of known items. This means setting up software that can compare what the camera sees with stored information to identify objects accurately. At the same time, I plan to set up a continuous video stream so that the camera feed can be viewed and analyzed in real time. Having this live video combined with object detection will let the system recognize and classify objects as they come into view, making it more interactive and useful. To do this, I’ll need to explore different machine learning models, figure out how to run them efficiently on the Raspberry Pi, and make sure the camera, detection program, and database all work smoothly together. These steps will really push the project forward and help build a smart vision system that can respond to what it sees.
 
 ## Code
-
+```Python
 from picamera2 import Picamera2, Preview
-
 import time
-
 import cv2
-
 picam2 = Picamera2()
-
 camera_config = picam2.create_still_configuration(main={"size": (1920, 1080)},
-
 lores={"size": (640, 480)}, display="lores")
-
 picam2.configure(camera_config)
-
-#picam2.start_preview(Preview.QTGL)
-
+#picam2.start_preview(Preview.QTGL) #Comment this out if not using desktop interface
 picam2.start()
-
 time.sleep(2)
-
 im = picam2.capture_array()
-
 im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB)
-
 cv2.imwrite('file.png', im)
-
+```
 This code initializes the Raspberry Pi Camera using the Picamera2 library, configures it to capture a still image at a resolution of 1920x1080, and starts the camera. After a brief delay to allow the camera to adjust, it captures an image, converts its color format from BGR to RGB using OpenCV, and saves the image as "file.png".
 
 [comment]: <> (# Schematics)
