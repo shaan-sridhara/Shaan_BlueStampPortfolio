@@ -15,7 +15,9 @@
 
 Since my first milestone, I have made significant and meaningful progress on both the hardware and software components of my project. One of the major improvements was physically attaching the Raspberry Pi Camera to the glasses in a secure and well-aligned position. This step was crucial for making the system wearable and functional in real-world use. On the software side, I successfully set up a live video stream from the camera, which included solving technical issues like fixing color distortion and configuring the camera settings through the PiCamera2 library. I also began working on the object detection aspect by preparing to integrate a TensorFlow Lite model, which will allow the system to identify objects in real time. These improvements have moved me much closer to my ultimate goal of developing an AI-powered wearable vision system, and they provide a strong foundation for the next phase of my work.
 
-This is my second milestone video:
+This is my second milestone video and a diagram:
+
+![Second Milestone Setup](image_2025-06-26_153834715.png)
 
 
 
