@@ -7,21 +7,99 @@
 
 ![Headstone Image](image_2025-06-17_161621492.png)
   
-[comment]: <> (# Final Milestone)
+# Final Milestone
 
-[comment]: <> (work in progress)
+## Modification 1
+
+I modified my smart glasses to detect specific objects in real time using a TensorFlow Lite model. Before starting the system, I can now type in the name of the object I want to detect—like "laptop" or "computer keyboard"—and the glasses will continuously watch for that object. When it’s confidently recognized by the model, a buzzer connected to the Raspberry Pi activates, giving me an audible or tactile alert. I also made sure the buzzer only goes off once per detection to avoid constant buzzing, and it resets when the object is no longer seen. This upgrade makes the glasses much more interactive and customizable, letting me choose what to track on the fly.
+
+
+
+
+### Code
+
+```Python
+import os
+import subprocess
+import RPi.GPIO as GPIO
+import time
+import ast
+
+# Ask user what to detect before starting
+target_label = input("Enter the object label to detect (e.g., laptop): ").strip().lower()
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+buzzer_pin = 21
+GPIO.setup(buzzer_pin, GPIO.OUT)
+
+project_dir = '/home/shaan/rpi-vision'
+python_bin = '/home/shaan/Documents/env/bin/python'
+
+env = os.environ.copy()
+env['PYTHONPATH'] = project_dir
+
+os.chdir(project_dir)
+print("Current directory:", os.getcwd())
+
+proc = subprocess.Popen(
+    [python_bin, 'tests/pitft_labeled_output.py', '--tflite'],
+    env=env,
+    stdout=subprocess.PIPE,
+    stderr=subprocess.STDOUT,
+    text=True
+)
+
+detection_active = False
+CONFIDENCE_THRESHOLD = 0.7
+
+try:
+    for line in proc.stdout:
+        print(line, end='')
+
+        if line.startswith("INFO:root:[('"):
+            try:
+                detections_str = line.split("INFO:root:")[1].strip()
+                detections = ast.literal_eval(detections_str)
+
+                found = False
+                for wnid, label, conf in detections:
+                    if label.lower() == target_label and conf >= CONFIDENCE_THRESHOLD:
+                        found = True
+                        break
+
+                if found and not detection_active:
+                    print(f"{target_label.capitalize()} confidently detected! Buzzing...")
+                    GPIO.output(buzzer_pin, GPIO.HIGH)
+                    time.sleep(0.5)
+                    GPIO.output(buzzer_pin, GPIO.LOW)
+                    detection_active = True
+                elif not found and detection_active:
+                    print(f"{target_label.capitalize()} no longer detected.")
+                    detection_active = False
+
+            except Exception as e:
+                print("Error parsing detection line:", e)
+
+except KeyboardInterrupt:
+    print("Monitoring stopped by user.")
+
+finally:
+    proc.terminate()
+    GPIO.cleanup()
+```
+
+This Python script monitors a TensorFlow object detection model’s output for a specific object entered by the user (e.g., "computer keyboard"). It converts the input label to lowercase and replaces spaces with underscores to match the model’s label format. The script reads detection results from the model’s live output, checks if the target label is present with at least 70% confidence, and activates a buzzer when the target is confidently detected for the first time. The buzzer stays off until the object disappears and is seen again. It uses the Raspberry Pi’s GPIO pin 21 to control the buzzer and safely resets everything when stopped.
 
 # Second Milestone
 
-Since my first milestone, I have made significant and meaningful progress on both the hardware and software components of my project. One of the major improvements was physically attaching the Raspberry Pi Camera to the glasses in a secure and well-aligned position. This step was crucial for making the system wearable and functional in real-world use. On the software side, I successfully set up a live video stream from the camera, which included solving technical issues like fixing color distortion and configuring the camera settings through the PiCamera2 library. I also began working on the object detection aspect by preparing to integrate a TensorFlow Lite model, which will allow the system to identify objects in real time. These improvements have moved me much closer to my ultimate goal of developing an AI-powered wearable vision system, and they provide a strong foundation for the next phase of my work.
-
-This is my second milestone video and a diagram:
-
 <iframe width="560" height="315" src="https://www.youtube.com/embed/KUQzLhIjmnM?si=WQE3oEMpKa3BfVY6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
+Since my first milestone, I have made significant and meaningful progress on both the hardware and software components of my project. One of the major improvements was physically attaching the Raspberry Pi Camera to the glasses in a secure and well-aligned position. This step was crucial for making the system wearable and functional in real-world use. On the software side, I successfully set up a live video stream from the camera, which included solving technical issues like fixing color distortion and configuring the camera settings through the PiCamera2 library. I also began working on the object detection aspect by preparing to integrate a TensorFlow Lite model, which will allow the system to identify objects in real time. These improvements have moved me much closer to my ultimate goal of developing an AI-powered wearable vision system, and they provide a strong foundation for the next phase of my work.
+
+This is a diagram of my Second Milestone
+
 ![Second Milestone Setup](image_2025-06-26_153834715.png)
-
-
 
 ## Challenges
 
@@ -78,6 +156,8 @@ This code establishes a live video stream that captures real-time footage using 
 
 # First Milestone
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/hwgU-7iSydI?si=aCjqJ5J-OpynQL5M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 My project is called Smart Glasses. The goal is to help people, especially those who can’t see well, by using AI to detect objects around them. I’m building it using a Raspberry Pi 5 and a camera that attaches to it. These parts will go on a glasses frame. The camera takes video of what’s in front of the person, and the AI will figure out what the objects are. Then, the glasses will say what it sees out loud using a speaker so the person knows what’s around them.
 
 So far, I was able to take a picture using the Raspberry Pi and the camera. At first, I tried to set it up without using a monitor or keyboard, but it was really hard and didn’t work for me. Instead, I decided to just plug it into a monitor and use a keyboard and mouse, which made it easier to work on.
@@ -86,7 +166,6 @@ My plan now is to find a database of pictures to help train the AI to recognize 
 
 This is my first milestone video:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/hwgU-7iSydI?si=aCjqJ5J-OpynQL5M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ![Milestone_Setup](Screenshot 2025-06-20 161814.png)
 
