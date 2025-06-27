@@ -73,6 +73,9 @@ def video_feed():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
 ```
+
+This code establishes a live video stream that captures real-time footage using the Raspberry Pi Camera and displays it through a web browser. By setting up a Flask server and using OpenCV to process each video frame, the stream can be accessed over a network, making it easy to monitor the camera feed remotely. This functionality is essential for testing and developing computer vision applications, as it provides a continuous and accessible view of what the camera is seeing. It also serves as the foundation for integrating more advanced features like object detection.
+
 # First Milestone
 
 My project is called Smart Glasses. The goal is to help people, especially those who can’t see well, by using AI to detect objects around them. I’m building it using a Raspberry Pi 5 and a camera that attaches to it. These parts will go on a glasses frame. The camera takes video of what’s in front of the person, and the AI will figure out what the objects are. Then, the glasses will say what it sees out loud using a speaker so the person knows what’s around them.
