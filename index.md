@@ -13,7 +13,7 @@
 
 I modified my smart glasses to detect specific objects in real time using a TensorFlow Lite model. Before starting the system, I can now type in the name of the object I want to detect—like "laptop" or "computer keyboard"—and the glasses will continuously watch for that object. When it’s confidently recognized by the model, a buzzer connected to the Raspberry Pi activates, giving me an audible or tactile alert. I also made sure the buzzer only goes off once per detection to avoid constant buzzing, and it resets when the object is no longer seen. This upgrade makes the glasses much more interactive and customizable, letting me choose what to track on the fly.
 
-![Diagram Modification 1](Screenshot 2025-06-27 142801.png)
+![Headstone Image]()
 
 
 ### Code
