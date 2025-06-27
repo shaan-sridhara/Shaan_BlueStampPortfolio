@@ -17,6 +17,8 @@ Since my first milestone, I have made significant and meaningful progress on bot
 
 This is my second milestone video and a diagram:
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/KUQzLhIjmnM?si=WQE3oEMpKa3BfVY6" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ![Second Milestone Setup](image_2025-06-26_153834715.png)
 
 
