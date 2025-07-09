@@ -9,11 +9,24 @@
   
 # Final Milestone
 
+## Modification 2
+
+![Headstone Image]()
+
+I implemented a mechanical power management solution for my smart glasses by incorporating a tactile button on the side frame. A custom-cut piece of balsam wood was affixed to the hinge mechanism such that, upon closing the glasses, the wood actuates the button, thereby powering the device on. When the glasses are opened, the button is released, cutting power and placing the device in a low-energy state. This mechanical activation mechanism effectively prevents continuous operation, significantly reducing unnecessary power consumption. Given the limited capacity of the portable power bank supplying the device, this design optimizes energy usage and extends operational longevity by ensuring the system remains active only when physically engaged.
+
+### Code
+
+```Python
+
+
 ## Modification 1
+
+![Headstone Image](Screenshot 2025-06-27 142801.png)
 
 I modified my smart glasses to detect specific objects in real time using a TensorFlow Lite model. Before starting the system, I can now type in the name of the object I want to detect—like "laptop" or "computer keyboard"—and the glasses will continuously watch for that object. When it’s confidently recognized by the model, a buzzer connected to the Raspberry Pi activates, giving me an audible or tactile alert. I also made sure the buzzer only goes off once per detection to avoid constant buzzing, and it resets when the object is no longer seen. This upgrade makes the glasses much more interactive and customizable, letting me choose what to track on the fly.
 
-![Headstone Image](Screenshot 2025-06-27 142801.png)
+
 
 
 ### Code
