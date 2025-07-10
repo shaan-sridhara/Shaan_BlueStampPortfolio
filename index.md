@@ -317,12 +317,15 @@ This code initializes the Raspberry Pi Camera using the Picamera2 library, confi
 [comment]: <> (work in progress)
 
 # Bill of Materials
+| Part                      | Note                                              | Price | Link                                                                                                     |
+|---------------------------|---------------------------------------------------|-------|----------------------------------------------------------------------------------------------------------|
+| Raspberry Pi 5            | Latest Raspberry Pi model                         | $75   | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)                                         |
+| Pi Camera Module          | Official camera for Raspberry Pi                 | $30   | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/)                                       |
+| Non-prescription Glasses  | Black rectangular fashion glasses                | $12   | [Buy here](https://www.amazon.com/GQUEEN-201512-Fashion-Rectangular-Glasses/dp/B00ZRD1MEI/)              |
+| Push Button x2            | Tactile buttons for triggering actions            | $1.50 | [Buy here](https://www.adafruit.com/product/367)                                                         |
+| Jumper Wires (Male-Female)| For GPIO connections to buttons, camera, etc.     | $3.00 | [Buy here](https://www.adafruit.com/product/1956)                                                        |
+| Balsa Wood (Small Sheet)  | Lightweight material for mounting components      | $4.00 | [Buy here](https://www.amazon.com/dp/B000BQW55C/)                                                         |
 
-| Part                    | Note                                  | Price | Link                                                                                                     |
-|-------------------------|-------------------------------------|-------|----------------------------------------------------------------------------------------------------------|
-| Raspberry Pi 5          | Latest Raspberry Pi model             | $75   | [Buy here](https://www.raspberrypi.org/products/raspberry-pi-5/)                                         |
-| Pi Camera Module        | Official camera for Raspberry Pi     | $30   | [Buy here](https://www.raspberrypi.org/products/camera-module-v3/)                                       |
-| Non-prescription Glasses| Black rectangular fashion glasses    | $12   | [Buy here](https://www.amazon.com/GQUEEN-201512-Fashion-Rectangular-Glasses/dp/B00ZRD1MEI/)               |
 
 
 [comment]: <> (# Other Resources/Examples)
