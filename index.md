@@ -1,5 +1,6 @@
 # Smart Glasses
-[comment]: <> (description)
+
+The Smart Glasses are a wearable vision system that detects specific objects in real time using a Raspberry Pi 5 and a camera module. Users can type in the name of an object they want to track, and the glasses will alert them with a buzzer when that object is confidently recognized by a TensorFlow Lite model. To improve power efficiency, a mechanical switch made from a piece of balsam wood is connected to the hinge of the glasses. When the glasses are closed, the switch presses a button that powers the system on, and when opened, it turns the system off. This ensures that the glasses only use power when they are being worn. The camera is mounted securely on the frame to provide a stable forward-facing view, making the Smart Glasses accurate, efficient, and user-friendly.
 
 | **Engineer** | **School** | **Area of Interest** | **Grade** |
 |:--:|:--:|:--:|:--:|
