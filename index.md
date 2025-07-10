@@ -10,7 +10,7 @@ The Smart Glasses are a wearable vision system that detects specific objects in 
   
 # Final Milestone
 
-## Modification 3
+## Modification 2
 
 ![Headstone Image]()
 
@@ -18,7 +18,7 @@ I use the google.generativeai library to connect to Gemini, Google's AI model th
 
 ### Code
 
-## Modification 2
+## Modification 1
 
 ![Headstone Image](image_2025-07-10_131349179.png)
 
@@ -120,89 +120,9 @@ finally:
     print("✅ GPIO cleaned up.")
 ```
 
-## Modification 1
+### Next Steps
 
-![Headstone Image](Screenshot 2025-06-27 142801.png)
-
-I modified my smart glasses to detect specific objects in real time using a TensorFlow Lite model. Before starting the system, I can now type in the name of the object I want to detect—like "laptop" or "computer keyboard"—and the glasses will continuously watch for that object. When it’s confidently recognized by the model, a buzzer connected to the Raspberry Pi activates, giving me an audible or tactile alert. I also made sure the buzzer only goes off once per detection to avoid constant buzzing, and it resets when the object is no longer seen. This upgrade makes the glasses much more interactive and customizable, letting me choose what to track on the fly.
-
-
-
-
-### Code
-
-```Python
-import os
-import subprocess
-import RPi.GPIO as GPIO
-import time
-import ast
-
-# Ask user what to detect before starting
-target_label = input("Enter the object label to detect (e.g., laptop): ").strip().lower()
-
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BCM)
-buzzer_pin = 21
-GPIO.setup(buzzer_pin, GPIO.OUT)
-
-project_dir = '/home/shaan/rpi-vision'
-python_bin = '/home/shaan/Documents/env/bin/python'
-
-env = os.environ.copy()
-env['PYTHONPATH'] = project_dir
-
-os.chdir(project_dir)
-print("Current directory:", os.getcwd())
-
-proc = subprocess.Popen(
-    [python_bin, 'tests/pitft_labeled_output.py', '--tflite'],
-    env=env,
-    stdout=subprocess.PIPE,
-    stderr=subprocess.STDOUT,
-    text=True
-)
-
-detection_active = False
-CONFIDENCE_THRESHOLD = 0.7
-
-try:
-    for line in proc.stdout:
-        print(line, end='')
-
-        if line.startswith("INFO:root:[('"):
-            try:
-                detections_str = line.split("INFO:root:")[1].strip()
-                detections = ast.literal_eval(detections_str)
-
-                found = False
-                for wnid, label, conf in detections:
-                    if label.lower() == target_label and conf >= CONFIDENCE_THRESHOLD:
-                        found = True
-                        break
-
-                if found and not detection_active:
-                    print(f"{target_label.capitalize()} confidently detected! Buzzing...")
-                    GPIO.output(buzzer_pin, GPIO.HIGH)
-                    time.sleep(0.5)
-                    GPIO.output(buzzer_pin, GPIO.LOW)
-                    detection_active = True
-                elif not found and detection_active:
-                    print(f"{target_label.capitalize()} no longer detected.")
-                    detection_active = False
-
-            except Exception as e:
-                print("Error parsing detection line:", e)
-
-except KeyboardInterrupt:
-    print("Monitoring stopped by user.")
-
-finally:
-    proc.terminate()
-    GPIO.cleanup()
-```
-
-This Python script monitors a TensorFlow object detection model’s output for a specific object entered by the user (e.g., "computer keyboard"). It converts the input label to lowercase and replaces spaces with underscores to match the model’s label format. The script reads detection results from the model’s live output, checks if the target label is present with at least 70% confidence, and activates a buzzer when the target is confidently detected for the first time. The buzzer stays off until the object disappears and is seen again. It uses the Raspberry Pi’s GPIO pin 21 to control the buzzer and safely resets everything when stopped.
+The next phase of my project will focus on implementing my second modification, which uses Google's Gemini AI to analyze and solve math problems directly from images. When a user presses a button, the camera will capture a photo of the problem, and Gemini will interpret the content, calculate the correct answers, and return the solution. This modification adds powerful educational functionality to the smart glasses, turning them into a hands-free math assistant. It’s a big step toward making the device more interactive and helpful in real-world learning environments.
 
 # Second Milestone
 
@@ -266,6 +186,10 @@ if __name__ == '__main__':
 ```
 
 This code establishes a live video stream that captures real-time footage using the Raspberry Pi Camera and displays it through a web browser. By setting up a Flask server and using OpenCV to process each video frame, the stream can be accessed over a network, making it easy to monitor the camera feed remotely. This functionality is essential for testing and developing computer vision applications, as it provides a continuous and accessible view of what the camera is seeing. It also serves as the foundation for integrating more advanced features like object detection.
+
+### Next Steps
+
+My next steps involve implementing two major modifications to improve the functionality of the system. The first is adding a power-saving feature that allows the model to be turned on and off with the press of a button, which will help avoid unnecessary detections and conserve energy when not in use. The second modification integrates Gemini AI to automatically solve math problems by analyzing a picture taken with the camera. Once the problem is solved, the system will use text-to-speech to read the answer out loud, making it more interactive and useful in real-time scenarios. These enhancements will make the device smarter, more efficient, and easier to use.
 
 # First Milestone
 
