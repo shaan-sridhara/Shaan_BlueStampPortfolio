@@ -11,7 +11,7 @@
 
 ## Modification 2
 
-![Headstone Image]()
+![Headstone Image](image_2025-07-10_131349179.png)
 
 I implemented a mechanical power management solution for my smart glasses by incorporating a tactile button on the side frame. A custom-cut piece of balsam wood was affixed to the hinge mechanism such that, upon closing the glasses, the wood actuates the button, thereby powering the device on. When the glasses are opened, the button is released, cutting power and placing the device in a low-energy state. This mechanical activation mechanism effectively prevents continuous operation, significantly reducing unnecessary power consumption. Given the limited capacity of the portable power bank supplying the device, this design optimizes energy usage and extends operational longevity by ensuring the system remains active only when physically engaged.
 
