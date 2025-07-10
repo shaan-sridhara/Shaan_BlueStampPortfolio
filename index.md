@@ -18,7 +18,98 @@ I implemented a mechanical power management solution for my smart glasses by inc
 ### Code
 
 ```Python
+import os
+import subprocess
+import RPi.GPIO as GPIO
+import time
+import ast
 
+button_pin = 27
+buzzer_pin = 21
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(button_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(buzzer_pin, GPIO.OUT)
+
+target_label = input("Enter the object label to detect (e.g., laptop): ").strip().lower().replace(" ", "_")
+
+project_dir = '/home/shaan/rpi-vision'
+python_bin = '/home/shaan/Documents/env/bin/python'
+env = os.environ.copy()
+env['PYTHONPATH'] = project_dir
+os.chdir(project_dir)
+
+print("Current directory:", os.getcwd())
+print(f"Will detect: {target_label}")
+print("Hold the button to start detection...")
+
+CONFIDENCE_THRESHOLD = 0.6
+model_process = None
+detection_active = False
+
+try:
+    while True:
+        button_pressed = GPIO.input(button_pin) == GPIO.LOW
+
+        if button_pressed and model_process is None:
+            print("🟢 Button held — starting model...")
+            model_process = subprocess.Popen(
+                [python_bin, 'tests/pitft_labeled_output.py', '--tflite'],
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True
+            )
+
+        elif not button_pressed and model_process is not None:
+            print("🔴 Button released — stopping model...")
+            model_process.terminate()
+            model_process.wait()
+            model_process = None
+            detection_active = False
+            GPIO.output(buzzer_pin, GPIO.LOW)
+
+        if model_process:
+            line = model_process.stdout.readline()
+            if not line:
+                continue
+
+            print("📤 MODEL:", line.strip())
+
+            if line.startswith("INFO:root:[('"):
+                try:
+                    detections_str = line.split("INFO:root:")[1].strip()
+                    detections = ast.literal_eval(detections_str)
+
+                    for wnid, label, conf in detections:
+                        print(f"🔍 Detected: {label} with confidence {conf:.2f}")
+
+                        if label.lower() == target_label and conf >= CONFIDENCE_THRESHOLD:
+                            print("✅ Match found — buzzing!")
+                            GPIO.output(buzzer_pin, GPIO.HIGH)
+                            time.sleep(0.2)
+                            GPIO.output(buzzer_pin, GPIO.LOW)
+                            detection_active = True
+                            break
+                        else:
+                            print("⛔ Not a match or confidence too low")
+
+                except Exception as e:
+                    print("⚠️ Error parsing detection line:", e)
+
+        time.sleep(0.05)
+
+except KeyboardInterrupt:
+    print("🛑 Stopped by user.")
+    if model_process:
+        model_process.terminate()
+        model_process.wait()
+
+finally:
+    GPIO.cleanup()
+    print("✅ GPIO cleaned up.")
+```
 
 ## Modification 1
 
