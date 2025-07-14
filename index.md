@@ -249,8 +249,6 @@ This code initializes the Raspberry Pi Camera using the Picamera2 library, confi
 | Push Button x2            | Tactile buttons for triggering actions            | $1.50 | [Buy here](https://www.adafruit.com/product/367)                                                         |
 | Jumper Wires (Male-Female)| For GPIO connections to buttons, camera, etc.     | $3.00 | [Buy here](https://www.adafruit.com/product/1956)                                                        |
 | Balsa Wood (Small Sheet)  | Lightweight material for mounting components      | $4.00 | [Buy here](https://www.amazon.com/dp/B000BQW55C/)                                                        |
-                                                      |
-
 
 
 [comment]: <> (# Other Resources/Examples)
