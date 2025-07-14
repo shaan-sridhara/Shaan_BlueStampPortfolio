@@ -12,7 +12,7 @@ The Smart Glasses are a wearable vision system that detects specific objects in 
 
 ## Modification 2
 
-![Headstone Image]()
+
 
 I use the google.generativeai library to connect to Gemini, Google's AI model that can understand both images and text. I authenticate with my API key and use the "gemini-1.5-flash" model because it's the current supported version. When I press the button, my Pi Camera takes a photo, and I send that image to Gemini with a prompt asking it to solve any problems shown. Gemini reads the image, processes the prompt, and returns the final answers, which I print out in the terminal.
 
@@ -248,7 +248,8 @@ This code initializes the Raspberry Pi Camera using the Picamera2 library, confi
 | Non-prescription Glasses  | Black rectangular fashion glasses                | $12   | [Buy here](https://www.amazon.com/GQUEEN-201512-Fashion-Rectangular-Glasses/dp/B00ZRD1MEI/)              |
 | Push Button x2            | Tactile buttons for triggering actions            | $1.50 | [Buy here](https://www.adafruit.com/product/367)                                                         |
 | Jumper Wires (Male-Female)| For GPIO connections to buttons, camera, etc.     | $3.00 | [Buy here](https://www.adafruit.com/product/1956)                                                        |
-| Balsa Wood (Small Sheet)  | Lightweight material for mounting components      | $4.00 | [Buy here](https://www.amazon.com/dp/B000BQW55C/)                                                         |
+| Balsa Wood (Small Sheet)  | Lightweight material for mounting components      | $4.00 | [Buy here](https://www.amazon.com/dp/B000BQW55C/)                                                        |
+                                                      |
 
 
 
