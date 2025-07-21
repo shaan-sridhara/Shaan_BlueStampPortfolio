@@ -18,6 +18,83 @@ I use the google.generativeai library to connect to Gemini, Google's AI model th
 
 ### Code
 
+```Python
+import os
+import time
+from datetime import datetime
+from gpiozero import Button
+from PIL import Image
+from picamera2 import Picamera2
+import cv2
+import google.generativeai as genai
+
+# === Gemini API Setup ===
+GEMINI_API_KEY = "AIzaSyAjytjD0_9yrHoKdUKJqnM17XhO4nbNbdc"
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+# === Setup Output Directory ===    
+save_dir = "Pictures"
+os.makedirs(save_dir, exist_ok=True)
+
+# === Setup PiCamera2 ===
+picam2 = Picamera2()
+camera_config = picam2.create_preview_configuration(main={"size": (640, 480)})
+picam2.configure(camera_config)
+picam2.start()
+time.sleep(2)
+
+# === Button Setup ===
+button = Button(20, pull_up=True, bounce_time=0.3)
+
+# === Picture & Gemini Response Function ===
+def take_picture():
+    try:
+        print("[INFO] Button pressed. Capturing image...")
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = os.path.join(save_dir, f"image_{timestamp}.png")
+
+        image = picam2.capture_array()
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        cv2.imwrite(filename, image)
+        print(f"[INFO] Picture saved to: {filename}")
+
+        with Image.open(filename) as img:
+            prompt = (
+                "Solve the problem in this image. Only give the final answer. "
+                "If there are multiple problems separate the answers by a comma. "
+                "If there isn't a problem in the image just tell me what you see."
+            )
+            response = model.generate_content([prompt, img])
+            result = response.text.strip()
+            print(f"[Gemini Answer] {result}")
+            os.system('amixer set Master 150%')
+            os.system(f'espeak -a 200 \"{result}\" &')
+
+        time.sleep(1)
+    except Exception as e:
+        print(f"[ERROR] {e}")
+
+# === Bind Button to Function ===
+button.when_pressed = take_picture
+
+# === Main Loop ===
+print("[READY] Waiting for button press on GPIO 20...")
+while True:
+    time.sleep(1)
+
+```
+
+This code sets up a Raspberry Pi with a camera and button to take a photo when the button (on GPIO 20) is pressed. The captured image is sent to Google's Gemini AI, which analyzes the image and responds with a short answer or description. The result is then spoken aloud using the espeak text-to-speech engine.
+
+### Challenges
+
+Some challenges I faced while creating this code included setting up the connection between Gemini and my computer. It was difficult because I had to install and configure several libraries in VS Code to get the code to communicate properly with Gemini. Another issue was that the text-to-speech (TTS) output was very quiet after a picture was taken. Making the audio louder was tricky and required experimenting with different system settings and volume controls before it finally worked.
+
+### Next Steps
+
+My next step is to design and develop a website that will serve as a central platform for users to easily access and interact with the software used by the smart glasses. This website will streamline the user experience by allowing quick access to features like image capture, AI analysis, and system settings, all in one place. It will also provide helpful documentation, updates, and support to ensure users can operate the glasses without needing to interact directly with the code. By creating this web interface, I hope to make the technology more user-friendly and accessible to a wider audience.
+
 ## Modification 1
 
 ![Headstone Image](image_2025-07-10_131349179.png)
@@ -119,6 +196,12 @@ finally:
     GPIO.cleanup()
     print("✅ GPIO cleaned up.")
 ```
+
+This code uses a button on GPIO 27 to control when a TensorFlow Lite object detection model runs on a Raspberry Pi, and a buzzer on GPIO 21 to signal when the specified object (e.g., "laptop") is detected with high confidence. When the button is held, the model starts; when released, the model stops and the buzzer turns off. If the detected object's label matches the user's input and its confidence is above 0.6, the buzzer briefly activates to signal a match.
+
+### Challenges 
+
+One challenge I faced during my first modification was attaching the button securely to the glasses. The materials involved didn’t bond well with most adhesives, making it difficult to find a reliable solution. Eventually, I used Clear Adhesive Sealant, which worked extremely well and kept the button firmly in place. Another challenge was setting up the TensorFlow model so that it could be turned on and off through the code. This required figuring out how to control the model's execution based on external input. After some troubleshooting, I was able to get it working as intended.
 
 ### Next Steps
 
