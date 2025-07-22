@@ -338,169 +338,64 @@ from PIL import Image
 import speech_recognition as sr
 from picamera2 import Picamera2
 
-# Gemini API
-genai.configure(api_key="YOUR_GEMINI_API_KEY")
-model = genai.GenerativeModel('gemini-pro-vision')
+# Configure your Gemini API key here
+GEMINI_API_KEY = "AIzaSyAjytjD0_9yrHoKdUKJqnM17XhO4nbNbdc"
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
-# Flask app
-app = Flask(__name__)
-
-# Camera
+# Initialize camera
 picam2 = Picamera2()
+picam2.configure(picam2.create_preview_configuration(main={"size": (640, 480)}))
 picam2.start()
 time.sleep(2)
 
-# Recognizer
+# Initialize Flask app
+app = Flask(__name__)
+
+# Initialize speech recognizer and mic
 recognizer = sr.Recognizer()
-mic = sr.Microphone()
+mic = sr.Microphone(device_index=1)  # Change device_index as needed
 
-os.makedirs("Pictures", exist_ok=True)
-
-
-def take_picture():
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    image_path = f"Pictures/image_{timestamp}.png"
-    picam2.capture_file(image_path)
-    print(f"[INFO] Picture saved to: {image_path}")
-    speak_text("Picture taken. Analyzing...")
-
-    caption = analyze_image(image_path)
-    print(f"[Gemini Answer] {caption}")
-    speak_text(caption)
-
-
-def analyze_image(image_path):
-    with open(image_path, "rb") as img:
-        image_bytes = img.read()
-    response = model.generate_content(["Describe this image", image_bytes])
-    return response.text
-
+save_dir = "Pictures"
+os.makedirs(save_dir, exist_ok=True)
 
 def speak_text(text):
-    tts = gTTS(text)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
-        mp3_path = f.name
-        tts.save(mp3_path)
-    subprocess.run(["mpg123", "-q", mp3_path])
-    os.remove(mp3_path)
-
-
-def play_audio_file(path):
-    wav_path = path + '.wav'
-    subprocess.run(['ffmpeg', '-y', '-i', path, wav_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.run(['aplay', wav_path])
-    os.remove(path)
-    os.remove(wav_path)
-
-
-@app.route('/')
-def index():
-    return '''
-    <html>
-    <head><title>Smart Glasses</title></head>
-    <body>
-        <h1>Live Camera Feed</h1>
-        <img src="/video_feed" width="640" height="480"><br><br>
-
-        <h2>Send Audio Message</h2>
-        <button id="record-btn">Hold to Record</button>
-        <p id="status"></p>
-        <p><strong>Transcription:</strong> <span id="transcript"></span></p>
-
-        <script>
-        let mediaRecorder;
-        let audioChunks = [];
-
-        const recordBtn = document.getElementById('record-btn');
-        const status = document.getElementById('status');
-        const transcript = document.getElementById('transcript');
-
-        recordBtn.addEventListener('mousedown', async () => {
-            status.textContent = 'Recording...';
-            transcript.textContent = '';
-            audioChunks = [];
-
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
-
-            mediaRecorder.ondataavailable = e => {
-                audioChunks.push(e.data);
-            };
-
-            mediaRecorder.onstop = async () => {
-                status.textContent = 'Uploading...';
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                const formData = new FormData();
-                formData.append('audio_data', audioBlob, 'recording.webm');
-
-                try {
-                    const response = await fetch('/upload_audio', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    const data = await response.json();
-                    status.textContent = 'Audio processed!';
-                    transcript.textContent = data.transcription;
-                } catch (err) {
-                    status.textContent = 'Error: ' + err.message;
-                }
-            };
-        });
-
-        recordBtn.addEventListener('mouseup', () => {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-            }
-        });
-
-        recordBtn.addEventListener('mouseleave', () => {
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-            }
-        });
-        </script>
-    </body>
-    </html>
-    '''
-
-
-@app.route('/video_feed')
-def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-
-@app.route('/upload_audio', methods=['POST'])
-def upload_audio():
-    if 'audio_data' not in request.files:
-        return jsonify({'transcription': '[No audio file uploaded]'}), 400
-
-    audio_file = request.files['audio_data']
-    suffix = os.path.splitext(audio_file.filename)[1] or '.webm'
-
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as temp_audio:
-        temp_audio.write(audio_file.read())
-        temp_path = temp_audio.name
-
-    print(f"[INFO] Received audio file: {temp_path}")
-
-    # Convert to WAV for transcription
-    wav_path = temp_path + '.wav'
-    subprocess.run(['ffmpeg', '-y', '-i', temp_path, wav_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
     try:
-        with sr.AudioFile(wav_path) as source:
-            audio_data = recognizer.record(source)
-            text = recognizer.recognize_google(audio_data)
-            print(f"[TRANSCRIBED] {text}")
+        tts = gTTS(text=text, lang='en')
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+            tts.save(fp.name)
+            subprocess.run(["mpg123", "-q", fp.name])
+            os.remove(fp.name)
     except Exception as e:
-        print(f"[TRANSCRIPTION ERROR] {e}")
-        text = "[Could not transcribe audio]"
+        print(f"[TTS ERROR] {e}")
 
-    threading.Thread(target=play_audio_file, args=(temp_path,)).start()
+def take_picture():
+    try:
+        print("[INFO] Capturing image...")
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = os.path.join(save_dir, f"image_{timestamp}.png")
 
-    return jsonify({'transcription': text})
+        image = picam2.capture_array()
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        cv2.imwrite(filename, image)
+        print(f"[INFO] Picture saved to: {filename}")
 
+        with Image.open(filename) as img:
+            prompt = (
+                "Solve the problem in this image. Only give the final answer. "
+                "If there are multiple problems separate the answers by a comma. "
+                "If there isn't a problem in the image just tell me what you see."
+            )
+            response = model.generate_content([prompt, img])
+            result = response.text.strip()
+            print(f"[Gemini Answer] {result}")
+
+            os.system('amixer set Master 150%')
+            speak_text(result)
+
+        time.sleep(1)
+    except Exception as e:
+        print(f"[ERROR] {e}")
 
 def gen_frames():
     while True:
@@ -512,10 +407,170 @@ def gen_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
+@app.route("/")
+def index():
+    return '''
+    <html>
+    <head>
+        <title>Smart Glasses Control</title>
+        <style>
+            body { font-family: Arial, sans-serif; }
+            #transcript { margin-top: 10px; font-weight: bold; }
+        </style>
+    </head>
+    <body>
+        <h1>Live Camera Feed</h1>
+        <img src="/video_feed" width="640" height="480"><br><br>
+
+        <h2>Send Audio Message</h2>
+        <button id="record-btn">Hold to Record</button>
+        <p id="status"></p>
+        <p>Transcription:</p>
+        <textarea id="transcript" rows="4" cols="50" readonly></textarea><br>
+        <button id="send-btn" disabled>Send Text</button>
+        <button id="rerecord-btn" disabled>Re-record</button>
+
+        <script>
+            let mediaRecorder;
+            let audioChunks = [];
+            const recordBtn = document.getElementById('record-btn');
+            const status = document.getElementById('status');
+            const transcriptArea = document.getElementById('transcript');
+            const sendBtn = document.getElementById('send-btn');
+            const rerecordBtn = document.getElementById('rerecord-btn');
+
+            let lastTranscript = "";
+
+            recordBtn.addEventListener('mousedown', async () => {
+                status.textContent = 'Recording...';
+                audioChunks = [];
+                transcriptArea.value = "";
+                sendBtn.disabled = true;
+                rerecordBtn.disabled = true;
+
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.start();
+
+                mediaRecorder.ondataavailable = e => {
+                    audioChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    status.textContent = 'Uploading...';
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const formData = new FormData();
+                    formData.append('audio_data', audioBlob, 'recording.webm');
+
+                    try {
+                        const response = await fetch('/upload_audio', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        status.textContent = 'Done';
+                        transcriptArea.value = data.transcript;
+                        lastTranscript = data.transcript;
+                        sendBtn.disabled = false;
+                        rerecordBtn.disabled = false;
+                    } catch (err) {
+                        status.textContent = 'Error: ' + err.message;
+                    }
+                };
+            });
+
+            recordBtn.addEventListener('mouseup', () => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+            });
+
+            recordBtn.addEventListener('mouseleave', () => {
+                if (mediaRecorder && mediaRecorder.state === 'recording') {
+                    mediaRecorder.stop();
+                }
+            });
+
+            sendBtn.addEventListener('click', () => {
+                if (lastTranscript) {
+                    fetch('/send_text', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({text: lastTranscript})
+                    });
+                    status.textContent = 'Text sent!';
+                    sendBtn.disabled = true;
+                    rerecordBtn.disabled = true;
+                }
+            });
+
+            rerecordBtn.addEventListener('click', () => {
+                transcriptArea.value = "";
+                status.textContent = 'Re-record and press the button.';
+                sendBtn.disabled = true;
+                rerecordBtn.disabled = true;
+            });
+        </script>
+    </body>
+    </html>
+    '''
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/upload_audio', methods=['POST'])
+def upload_audio():
+    if 'audio_data' not in request.files:
+        return jsonify({"error": "No audio file uploaded"}), 400
+
+    audio_file = request.files['audio_data']
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio:
+        temp_audio.write(audio_file.read())
+        temp_webm_path = temp_audio.name
+
+    temp_wav_path = temp_webm_path.replace(".webm", ".wav")
+
+    # Convert webm to wav for transcription
+    try:
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", temp_webm_path, temp_wav_path],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True
+        )
+    except subprocess.CalledProcessError:
+        os.remove(temp_webm_path)
+        return jsonify({"error": "Audio conversion failed"}), 500
+
+    # Transcribe audio
+    try:
+        r = sr.Recognizer()
+        with sr.AudioFile(temp_wav_path) as source:
+            audio = r.record(source)
+        transcript = r.recognize_google(audio)
+    except Exception as e:
+        transcript = f"[Transcription Error: {e}]"
+
+    # Speak the transcript aloud on server headphones
+    speak_text(transcript)
+
+    os.remove(temp_webm_path)
+    os.remove(temp_wav_path)
+
+    return jsonify({"transcript": transcript})
+
+@app.route('/send_text', methods=['POST'])
+def send_text():
+    data = request.get_json()
+    text = data.get("text", "")
+    if text:
+        print(f"[Text sent from web UI] {text}")
+        speak_text(text)
+    return ('', 204)
 
 def run_flask():
     app.run(host='0.0.0.0', port=5000)
-
 
 if __name__ == "__main__":
     threading.Thread(target=run_flask, daemon=True).start()
@@ -538,9 +593,10 @@ if __name__ == "__main__":
         except sr.UnknownValueError:
             print("[INFO] Could not understand audio.")
         except sr.RequestError as e:
-            print(f"[ERROR] API error: {e}")
+            print(f"[ERROR] Google Speech API error: {e}")
         except Exception as e:
             print(f"[ERROR] {e}")
+
 
 ```
 
