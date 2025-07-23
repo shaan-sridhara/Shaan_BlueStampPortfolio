@@ -429,13 +429,56 @@ def index():
     <head>
         <title>Smart Glasses Control</title>
         <style>
-            body {{ font-family: Arial, sans-serif; }}
-            #transcript {{ margin-top: 10px; font-weight: bold; }}
+            body {{
+                font-family: Arial, sans-serif;
+                background-color: black;
+                color: white;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+            }}
+            #video-container {{
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }}
+            img {{
+                border: 3px solid white;
+                border-radius: 12px;
+                box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            }}
+            #transcript {{
+                margin-top: 10px;
+                font-weight: bold;
+                width: 80%;
+                background-color: #222;
+                color: white;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+            }}
+            select, button {{
+                background-color: #444;
+                color: white;
+                padding: 10px;
+                border: none;
+                margin: 5px;
+                border-radius: 6px;
+                cursor: pointer;
+            }}
+            #status {{
+                margin-top: 10px;
+                height: 1.5em;
+            }}
         </style>
     </head>
     <body>
         <h1>Live Camera Feed</h1>
-        <img src="/video_feed" width="640" height="480"><br><br>
+        <div id="video-container">
+            <img src="/video_feed" width="640" height="480">
+        </div>
 
         <h2>Send Audio Message</h2>
         <label for="lang">Translate from:</label>
@@ -496,40 +539,44 @@ def index():
             }});
 
             recordBtn.addEventListener('mouseup', () => {{
-                if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+                if (mediaRecorder && mediaRecorder.state === 'recording') {{
+                    mediaRecorder.stop();
+                }}
             }});
 
-            recordBtn.addEventListener('mouseleave', () => {{
-                if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-            }});
+            sendBtn.addEventListener('click', async () => {{
+                const text = transcriptArea.value.trim();
+                if(!text) {{
+                    status.textContent = 'Please record or enter text before sending.';
+                    return;
+                }}
+                const targetLang = langSelect.value;
+                status.textContent = 'Translating and playing...';
 
-            sendBtn.addEventListener('click', () => {{
-                const editedText = transcriptArea.value.trim();
-                if (editedText) {{
-                    status.textContent = 'Translating and speaking...';
-                    fetch('/send_text', {{
+                try {{
+                    const res = await fetch('/translate_and_speak', {{
                         method: 'POST',
-                        headers: {{ 'Content-Type': 'application/json' }},
-                        body: JSON.stringify({{ text: editedText, lang: langSelect.value }})
-                    }}).then(response => {{
-                        if(response.ok) {{
-                            status.textContent = 'Done speaking.';
-                            sendBtn.disabled = true;
-                            rerecordBtn.disabled = true;
-                        }} else {{
-                            status.textContent = 'Error sending text.';
-                        }}
-                    }}).catch(err => {{
-                        status.textContent = 'Error: ' + err.message;
+                        headers: {{
+                            'Content-Type': 'application/json'
+                        }},
+                        body: JSON.stringify({{ text, target_lang: targetLang }})
                     }});
+                    const result = await res.json();
+                    if(result.status === 'success') {{
+                        status.textContent = 'Translation played in headphones.';
+                    }} else {{
+                        status.textContent = 'Error: ' + result.message;
+                    }}
+                }} catch(err) {{
+                    status.textContent = 'Error: ' + err.message;
                 }}
             }});
 
             rerecordBtn.addEventListener('click', () => {{
-                transcriptArea.value = "";
-                status.textContent = 'Re-record and press the button.';
+                transcriptArea.value = '';
                 sendBtn.disabled = true;
                 rerecordBtn.disabled = true;
+                status.textContent = '';
             }});
         </script>
     </body>
@@ -576,38 +623,46 @@ def upload_audio():
         os.remove(wav_path)
         return jsonify({"error": f"Transcription error: {e}"}), 500
 
-    # Do NOT speak here! Just return original transcript for display
+    # Clean up temp files
     os.remove(webm_path)
     os.remove(wav_path)
 
+    # Return original transcript for display (no speech here)
     return jsonify({
         "transcript_original": original_transcript,
     })
 
-@app.route('/send_text', methods=['POST'])
-def send_text():
+@app.route('/translate_and_speak', methods=['POST'])
+def translate_and_speak():
     data = request.get_json()
     text = data.get("text", "")
-    lang = data.get("lang", "en")
+    target_lang = data.get("target_lang", "en")
 
-    if text:
-        # Translate user-edited text from chosen language to English before TTS
-        try:
-            prompt = f"Translate this from {supported_languages.get(lang, 'a language')} to English: '''{text}'''"
-            response = model.generate_content(prompt)
-            translation = response.text.strip()
-        except Exception as e:
-            print(f"[Gemini Translation Error] {e}")
-            translation = text  # fallback to original text
+    if not text:
+        return jsonify({"status": "error", "message": "No text provided"}), 400
 
+    try:
+        prompt = f"Translate this from {supported_languages.get(target_lang, 'a language')} to English: '''{text}'''"
+        response = model.generate_content(prompt)
+        translation = response.text.strip()
+    except Exception as e:
+        print(f"[Gemini Translation Error] {e}")
+        translation = text
+
+    try:
         speak_text(translation, lang_code="en")
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"TTS error: {e}"}), 500
 
+    return jsonify({"status": "success", "translated_text": translation})
+
+@app.route('/send_text', methods=['POST'])
+def send_text():
+    # This route is kept if you want it for compatibility but you can remove it
     return ('', 204)
-
 
 def run_flask():
     app.run(host='0.0.0.0', port=5000)
-
 
 if __name__ == "__main__":
     threading.Thread(target=run_flask, daemon=True).start()
