@@ -426,7 +426,7 @@ def index():
         <button id="record-btn">Hold to Record</button>
         <p id="status"></p>
         <p>Transcription:</p>
-        <textarea id="transcript" rows="4" cols="50" readonly></textarea><br>
+        <textarea id="transcript" rows="4" cols="50"></textarea><br>
         <button id="send-btn" disabled>Send Text</button>
         <button id="rerecord-btn" disabled>Re-record</button>
 
@@ -438,8 +438,6 @@ def index():
             const transcriptArea = document.getElementById('transcript');
             const sendBtn = document.getElementById('send-btn');
             const rerecordBtn = document.getElementById('rerecord-btn');
-
-            let lastTranscript = "";
 
             recordBtn.addEventListener('mousedown', async () => {
                 status.textContent = 'Recording...';
@@ -469,8 +467,7 @@ def index():
                         });
                         const data = await response.json();
                         status.textContent = 'Done';
-                        transcriptArea.value = data.transcript;
-                        lastTranscript = data.transcript;
+                        transcriptArea.value = data.transcript_original; // ONLY original transcript shown
                         sendBtn.disabled = false;
                         rerecordBtn.disabled = false;
                     } catch (err) {
@@ -492,11 +489,12 @@ def index():
             });
 
             sendBtn.addEventListener('click', () => {
-                if (lastTranscript) {
+                const editedTranscript = transcriptArea.value.trim();
+                if (editedTranscript) {
                     fetch('/send_text', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({text: lastTranscript})
+                        body: JSON.stringify({text: editedTranscript})
                     });
                     status.textContent = 'Text sent!';
                     sendBtn.disabled = true;
@@ -543,22 +541,43 @@ def upload_audio():
         os.remove(temp_webm_path)
         return jsonify({"error": "Audio conversion failed"}), 500
 
-    # Transcribe audio
+    # Transcribe audio (original language)
     try:
         r = sr.Recognizer()
         with sr.AudioFile(temp_wav_path) as source:
             audio = r.record(source)
-        transcript = r.recognize_google(audio)
+        original_transcript = r.recognize_google(audio)
     except Exception as e:
-        transcript = f"[Transcription Error: {e}]"
+        os.remove(temp_webm_path)
+        os.remove(temp_wav_path)
+        return jsonify({"error": f"Transcription error: {e}"}), 500
 
-    # Speak the transcript aloud on server headphones
-    speak_text(transcript)
+    # Translate silently to English using Gemini and play TTS (no output to frontend)
+    try:
+        translate_prompt = (
+            f"Translate the following text to English ONLY, no extra commentary:\n"
+            f"'''{original_transcript}'''"
+        )
+        response = model.generate_text(
+            prompt=translate_prompt,
+            temperature=0,
+            max_output_tokens=256,
+        )
+        english_translation = response.text.strip()
+    except Exception as e:
+        print(f"[Gemini Translation Error] {e}")
+        english_translation = "[Translation Error]"
+
+    # Speak English translation aloud on server headphones
+    speak_text(english_translation)
 
     os.remove(temp_webm_path)
     os.remove(temp_wav_path)
 
-    return jsonify({"transcript": transcript})
+    # Return only the original transcript to frontend
+    return jsonify({
+        "transcript_original": original_transcript,
+    })
 
 @app.route('/send_text', methods=['POST'])
 def send_text():
@@ -596,8 +615,6 @@ if __name__ == "__main__":
             print(f"[ERROR] Google Speech API error: {e}")
         except Exception as e:
             print(f"[ERROR] {e}")
-
-
 ```
 
 [comment]: <> (work in progress)
