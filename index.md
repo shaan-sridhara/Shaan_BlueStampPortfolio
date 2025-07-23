@@ -343,25 +343,41 @@ GEMINI_API_KEY = "AIzaSyAjytjD0_9yrHoKdUKJqnM17XhO4nbNbdc"
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+# Initialize Flask app
+app = Flask(__name__)
+
 # Initialize camera
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration(main={"size": (640, 480)}))
 picam2.start()
 time.sleep(2)
 
-# Initialize Flask app
-app = Flask(__name__)
-
-# Initialize speech recognizer and mic
+# Initialize speech recognizer and mic for voice commands
 recognizer = sr.Recognizer()
-mic = sr.Microphone(device_index=1)  # Change device_index as needed
+mic = sr.Microphone(device_index=1)  # Adjust your mic device index if needed
 
 save_dir = "Pictures"
 os.makedirs(save_dir, exist_ok=True)
 
-def speak_text(text):
+# Supported languages for dropdown (code: language)
+supported_languages = {
+    "en": "English",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "zh": "Chinese",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "hi": "Hindi",
+    "ar": "Arabic",
+    "ru": "Russian",
+    "pt": "Portuguese",
+    "it": "Italian",
+}
+
+def speak_text(text, lang_code="en"):
     try:
-        tts = gTTS(text=text, lang='en')
+        tts = gTTS(text=text, lang=lang_code)
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
             tts.save(fp.name)
             subprocess.run(["mpg123", "-q", fp.name])
@@ -392,8 +408,6 @@ def take_picture():
 
             os.system('amixer set Master 150%')
             speak_text(result)
-
-        time.sleep(1)
     except Exception as e:
         print(f"[ERROR] {e}")
 
@@ -409,13 +423,14 @@ def gen_frames():
 
 @app.route("/")
 def index():
-    return '''
+    dropdown = ''.join([f'<option value="{code}">{lang}</option>' for code, lang in supported_languages.items()])
+    return f'''
     <html>
     <head>
         <title>Smart Glasses Control</title>
         <style>
-            body { font-family: Arial, sans-serif; }
-            #transcript { margin-top: 10px; font-weight: bold; }
+            body {{ font-family: Arial, sans-serif; }}
+            #transcript {{ margin-top: 10px; font-weight: bold; }}
         </style>
     </head>
     <body>
@@ -423,9 +438,12 @@ def index():
         <img src="/video_feed" width="640" height="480"><br><br>
 
         <h2>Send Audio Message</h2>
+        <label for="lang">Translate from:</label>
+        <select id="lang">{dropdown}</select><br><br>
+
         <button id="record-btn">Hold to Record</button>
         <p id="status"></p>
-        <p>Transcription:</p>
+        <p>Transcription (Original Language):</p>
         <textarea id="transcript" rows="4" cols="50"></textarea><br>
         <button id="send-btn" disabled>Send Text</button>
         <button id="rerecord-btn" disabled>Re-record</button>
@@ -433,90 +451,78 @@ def index():
         <script>
             let mediaRecorder;
             let audioChunks = [];
+
             const recordBtn = document.getElementById('record-btn');
             const status = document.getElementById('status');
             const transcriptArea = document.getElementById('transcript');
             const sendBtn = document.getElementById('send-btn');
             const rerecordBtn = document.getElementById('rerecord-btn');
+            const langSelect = document.getElementById('lang');
 
-            recordBtn.addEventListener('mousedown', async () => {
+            recordBtn.addEventListener('mousedown', async () => {{
                 status.textContent = 'Recording...';
                 audioChunks = [];
                 transcriptArea.value = "";
                 sendBtn.disabled = true;
                 rerecordBtn.disabled = true;
 
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({{ audio: true }});
                 mediaRecorder = new MediaRecorder(stream);
                 mediaRecorder.start();
 
-                mediaRecorder.ondataavailable = e => {
-                    audioChunks.push(e.data);
-                };
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
 
-                mediaRecorder.onstop = async () => {
+                mediaRecorder.onstop = async () => {{
                     status.textContent = 'Uploading...';
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const blob = new Blob(audioChunks, {{ type: 'audio/webm' }});
                     const formData = new FormData();
-                    formData.append('audio_data', audioBlob, 'recording.webm');
+                    formData.append('audio_data', blob, 'recording.webm');
+                    formData.append('target_lang', langSelect.value);
 
-                    try {
-                        const response = await fetch('/upload_audio', {
+                    try {{
+                        const res = await fetch('/upload_audio', {{
                             method: 'POST',
                             body: formData
-                        });
-
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            console.error("Upload error:", errorText);
-                            status.textContent = 'Server Error: Unable to process audio.';
-                            return;
-                        }
-
-                        const data = await response.json();
-                        status.textContent = 'Done';
+                        }});
+                        const data = await res.json();
                         transcriptArea.value = data.transcript_original;
+                        status.textContent = 'Done';
                         sendBtn.disabled = false;
                         rerecordBtn.disabled = false;
-                    } catch (err) {
-                        console.error(err);
+                    }} catch (err) {{
                         status.textContent = 'Error: ' + err.message;
-                    }
-                };
-            });
+                    }}
+                }};
+            }});
 
-            recordBtn.addEventListener('mouseup', () => {
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
-            });
+            recordBtn.addEventListener('mouseup', () => {{
+                if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+            }});
 
-            recordBtn.addEventListener('mouseleave', () => {
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
-            });
+            recordBtn.addEventListener('mouseleave', () => {{
+                if(mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+            }});
 
-            sendBtn.addEventListener('click', () => {
-                const editedTranscript = transcriptArea.value.trim();
-                if (editedTranscript) {
-                    fetch('/send_text', {
+            sendBtn.addEventListener('click', () => {{
+                const editedText = transcriptArea.value.trim();
+                if (editedText) {{
+                    fetch('/send_text', {{
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({text: editedTranscript})
-                    });
+                        headers: {{ 'Content-Type': 'application/json' }},
+                        body: JSON.stringify({{ text: editedText, lang: langSelect.value }})
+                    }});
                     status.textContent = 'Text sent!';
                     sendBtn.disabled = true;
                     rerecordBtn.disabled = true;
-                }
-            });
+                }}
+            }});
 
-            rerecordBtn.addEventListener('click', () => {
+            rerecordBtn.addEventListener('click', () => {{
                 transcriptArea.value = "";
                 status.textContent = 'Re-record and press the button.';
                 sendBtn.disabled = true;
                 rerecordBtn.disabled = true;
-            });
+            }});
         </script>
     </body>
     </html>
@@ -532,58 +538,52 @@ def upload_audio():
         return jsonify({"error": "No audio file uploaded"}), 400
 
     audio_file = request.files['audio_data']
+    target_lang = request.form.get('target_lang', 'en')
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as temp_audio:
         temp_audio.write(audio_file.read())
-        temp_webm_path = temp_audio.name
+        webm_path = temp_audio.name
 
-    temp_wav_path = temp_webm_path.replace(".webm", ".wav")
+    wav_path = webm_path.replace(".webm", ".wav")
 
-    # Convert webm to wav for transcription
+    # Convert webm to wav
     try:
         subprocess.run(
-            ["ffmpeg", "-y", "-i", temp_webm_path, temp_wav_path],
+            ["ffmpeg", "-y", "-i", webm_path, wav_path],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             check=True
         )
     except subprocess.CalledProcessError:
-        os.remove(temp_webm_path)
+        os.remove(webm_path)
         return jsonify({"error": "Audio conversion failed"}), 500
 
-    # Transcribe audio (original language)
+    # Transcribe original audio
     try:
-        r = sr.Recognizer()
-        with sr.AudioFile(temp_wav_path) as source:
-            audio = r.record(source)
-        original_transcript = r.recognize_google(audio)
+        with sr.AudioFile(wav_path) as source:
+            audio = recognizer.record(source)
+        original_transcript = recognizer.recognize_google(audio)
     except Exception as e:
-        os.remove(temp_webm_path)
-        os.remove(temp_wav_path)
+        os.remove(webm_path)
+        os.remove(wav_path)
         return jsonify({"error": f"Transcription error: {e}"}), 500
 
-    # Translate silently to English using Gemini and play TTS
-    english_translation = None
+    # Use Gemini to translate from selected language to English (hidden from frontend)
     try:
-        translate_prompt = (
-            f"Translate the following text to English ONLY, no extra commentary:\n"
-            f"'''{original_transcript}'''"
-        )
-        response = model.generate_text(
-            prompt=translate_prompt,
-            temperature=0,
-            max_output_tokens=256,
-        )
+        prompt = f"Translate this from {supported_languages.get(target_lang, 'a language')} to English: '''{original_transcript}'''"
+        response = model.generate_content(prompt)
         english_translation = response.text.strip()
     except Exception as e:
         print(f"[Gemini Translation Error] {e}")
-        english_translation = None
+        english_translation = original_transcript  # fallback to original if error
 
-    if english_translation:
-        speak_text(english_translation)
+    # Speak the English translation aloud on server
+    speak_text(english_translation, lang_code="en")
 
-    os.remove(temp_webm_path)
-    os.remove(temp_wav_path)
+    os.remove(webm_path)
+    os.remove(wav_path)
 
+    # Return ONLY the original transcript to frontend (untranslated)
     return jsonify({
         "transcript_original": original_transcript,
     })
@@ -592,13 +592,26 @@ def upload_audio():
 def send_text():
     data = request.get_json()
     text = data.get("text", "")
+    lang = data.get("lang", "en")
+
     if text:
-        print(f"[Text sent from web UI] {text}")
-        speak_text(text)
+        # Translate user-edited text from chosen language to English before TTS
+        try:
+            prompt = f"Translate this from {supported_languages.get(lang, 'a language')} to English: '''{text}'''"
+            response = model.generate_content(prompt)
+            translation = response.text.strip()
+        except Exception as e:
+            print(f"[Gemini Translation Error] {e}")
+            translation = text  # fallback to original text
+
+        speak_text(translation, lang_code="en")
+
     return ('', 204)
+
 
 def run_flask():
     app.run(host='0.0.0.0', port=5000)
+
 
 if __name__ == "__main__":
     threading.Thread(target=run_flask, daemon=True).start()
@@ -607,23 +620,19 @@ if __name__ == "__main__":
     while True:
         with mic as source:
             recognizer.adjust_for_ambient_noise(source)
-            print("🎤 Listening...")
+            print("🎤 Listening for 'take a picture' command...")
             try:
                 audio = recognizer.listen(source, timeout=10)
+                command = recognizer.recognize_google(audio).lower()
+                print(f"[HEARD] {command}")
+                if "take a picture" in command:
+                    take_picture()
             except sr.WaitTimeoutError:
                 continue
-
-        try:
-            command = recognizer.recognize_google(audio).lower()
-            print(f"[HEARD] {command}")
-            if "take a picture" in command:
-                take_picture()
-        except sr.UnknownValueError:
-            print("[INFO] Could not understand audio.")
-        except sr.RequestError as e:
-            print(f"[ERROR] Google Speech API error: {e}")
-        except Exception as e:
-            print(f"[ERROR] {e}")
+            except sr.UnknownValueError:
+                print("[INFO] Could not understand audio.")
+            except sr.RequestError as e:
+                print(f"[ERROR] Google Speech API error: {e}")
 ```
 
 [comment]: <> (work in progress)
