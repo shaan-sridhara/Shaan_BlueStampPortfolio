@@ -465,12 +465,21 @@ def index():
                             method: 'POST',
                             body: formData
                         });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error("Upload error:", errorText);
+                            status.textContent = 'Server Error: Unable to process audio.';
+                            return;
+                        }
+
                         const data = await response.json();
                         status.textContent = 'Done';
-                        transcriptArea.value = data.transcript_original; // ONLY original transcript shown
+                        transcriptArea.value = data.transcript_original;
                         sendBtn.disabled = false;
                         rerecordBtn.disabled = false;
                     } catch (err) {
+                        console.error(err);
                         status.textContent = 'Error: ' + err.message;
                     }
                 };
@@ -552,7 +561,8 @@ def upload_audio():
         os.remove(temp_wav_path)
         return jsonify({"error": f"Transcription error: {e}"}), 500
 
-    # Translate silently to English using Gemini and play TTS (no output to frontend)
+    # Translate silently to English using Gemini and play TTS
+    english_translation = None
     try:
         translate_prompt = (
             f"Translate the following text to English ONLY, no extra commentary:\n"
@@ -566,15 +576,14 @@ def upload_audio():
         english_translation = response.text.strip()
     except Exception as e:
         print(f"[Gemini Translation Error] {e}")
-        english_translation = "[Translation Error]"
+        english_translation = None
 
-    # Speak English translation aloud on server headphones
-    speak_text(english_translation)
+    if english_translation:
+        speak_text(english_translation)
 
     os.remove(temp_webm_path)
     os.remove(temp_wav_path)
 
-    # Return only the original transcript to frontend
     return jsonify({
         "transcript_original": original_transcript,
     })
