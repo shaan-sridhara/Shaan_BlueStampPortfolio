@@ -506,14 +506,22 @@ def index():
             sendBtn.addEventListener('click', () => {{
                 const editedText = transcriptArea.value.trim();
                 if (editedText) {{
+                    status.textContent = 'Translating and speaking...';
                     fetch('/send_text', {{
                         method: 'POST',
                         headers: {{ 'Content-Type': 'application/json' }},
                         body: JSON.stringify({{ text: editedText, lang: langSelect.value }})
+                    }}).then(response => {{
+                        if(response.ok) {{
+                            status.textContent = 'Done speaking.';
+                            sendBtn.disabled = true;
+                            rerecordBtn.disabled = true;
+                        }} else {{
+                            status.textContent = 'Error sending text.';
+                        }}
+                    }}).catch(err => {{
+                        status.textContent = 'Error: ' + err.message;
                     }});
-                    status.textContent = 'Text sent!';
-                    sendBtn.disabled = true;
-                    rerecordBtn.disabled = true;
                 }}
             }});
 
@@ -568,22 +576,10 @@ def upload_audio():
         os.remove(wav_path)
         return jsonify({"error": f"Transcription error: {e}"}), 500
 
-    # Use Gemini to translate from selected language to English (hidden from frontend)
-    try:
-        prompt = f"Translate this from {supported_languages.get(target_lang, 'a language')} to English: '''{original_transcript}'''"
-        response = model.generate_content(prompt)
-        english_translation = response.text.strip()
-    except Exception as e:
-        print(f"[Gemini Translation Error] {e}")
-        english_translation = original_transcript  # fallback to original if error
-
-    # Speak the English translation aloud on server
-    speak_text(english_translation, lang_code="en")
-
+    # Do NOT speak here! Just return original transcript for display
     os.remove(webm_path)
     os.remove(wav_path)
 
-    # Return ONLY the original transcript to frontend (untranslated)
     return jsonify({
         "transcript_original": original_transcript,
     })
