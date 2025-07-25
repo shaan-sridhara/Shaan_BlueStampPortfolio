@@ -686,6 +686,10 @@ if __name__ == "__main__":
                 print(f"[ERROR] Google Speech API error: {e}")
 ```
 
+# Schematics
+
+![Headstone Image]()
+
 [comment]: <> (work in progress)
 
 # Bill of Materials
