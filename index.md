@@ -688,9 +688,9 @@ if __name__ == "__main__":
 
 # Schematics
 
-![Headstone Image]()
+![Headstone Image](image_2025-07-25_142151696.png)
 
-[comment]: <> (work in progress)
+These Schematics show a rasberry pi, mic and camera.
 
 # Bill of Materials
 | Part                      | Note                                              | Price | Link                                                                                                     |
